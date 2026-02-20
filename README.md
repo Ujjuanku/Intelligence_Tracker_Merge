@@ -3,7 +3,8 @@
 A production-grade competitive intelligence web app that tracks SaaS competitor pages (pricing, changelogs, documentation). It detects meaningful content changes, filters out irrelevant noise, and uses AI to generate strategic insights dynamically.
 
 ## 🚀 Live Demo & Repository
-- **Live Demo**: [Insert Live Hosted Link Here]
+- **Frontend App (Vercel)**: [https://intelligence-tracker-frontend-c8yjlekkp-ujjuankus-projects.vercel.app](https://intelligence-tracker-frontend-c8yjlekkp-ujjuankus-projects.vercel.app)
+- **Backend API (Railway)**: [https://web-production-035fb.up.railway.app](https://web-production-035fb.up.railway.app)
 - **GitHub Repository**: [https://github.com/Ujjuanku/Intelligence_Tracker_Merge](https://github.com/Ujjuanku/Intelligence_Tracker_Merge)
 
 ## 📋 What is Done
