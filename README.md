@@ -1,91 +1,68 @@
 # Competitive Intelligence Tracker
 
-A production-grade competitive intelligence tool that tracks SaaS pricing pages, changelogs, and documentation. It detects meaningful content changes, filters out noise (timestamps, navigation), and uses AI to generate strategic insights.
+A production-grade competitive intelligence web app that tracks SaaS competitor pages (pricing, changelogs, documentation). It detects meaningful content changes, filters out irrelevant noise, and uses AI to generate strategic insights dynamically.
 
-## 🚀 Live Demo
-[Insert Railway Link Here]
+## 🚀 Live Demo & Repository
+- **Live Demo**: [Insert Live Hosted Link Here]
+- **GitHub Repository**: [https://github.com/Ujjuanku/Intelligence_Tracker_Merge](https://github.com/Ujjuanku/Intelligence_Tracker_Merge)
 
-## ✨ Key Features
+## 📋 What is Done
+- **Competitor Tracking**: Add links to competitors (e.g., pricing, docs, changelogs) and fetch their current content.
+- **Smart Diffing**: Paragraph-level comparison tailored for documentation, highlighting actual structural and textual changes.
+- **Strategic Noise Filtering**: Intelligent preprocessing removes dynamic noise like timestamps, vote counts, and headers/footers.
+- **AI-Powered Insights**: Integrates with OpenAI's GPT-3.5-Turbo to categorize changes into Pricing, Features, Positioning, and Strategy.
+- **History Tracking**: Retains historical snapshots and shows previous checks per competitor.
+- **System Health Page**: A dedicated `/system-status` dashboard to monitor the backend, database connection, and AI service health.
+- **Basic Error Handling**: Graceful fallback forms and UI states for empty pages or missing data.
 
-- **Strategic Noise Filtering**: Intelligent preprocessing removes dynamic content like "14 hours ago", vote counts, and navigation menus to focus on *actual* product updates.
-- **Smart Diffing**: Paragraph-level comparison tailored for SaaS documentation, ignoring trivial whitespace or order changes.
-- **AI-Powered Insights**: Uses GPT-3.5-Turbo to categorize changes into:
-  - 💰 **Pricing Updates**
-  - 🚀 **New Features**
-  - 📢 **Positioning Changes**
-  - 🧠 **Strategic Implications**
-- **Visual Dashboard**: A clean, modern UI to track competitors and view historical snapshots.
-- **System Health**: A dedicated status dashboard to monitor backend, database, and AI service health.
+## 🚧 What is Not Done (Future Improvements)
+- **Automated Scheduling**: Cron jobs for running checks automatically at set intervals.
+- **Alerting System**: Email or Slack notifications when significant strategic changes are detected.
+- **Advanced Filtering**: User-defined tags or custom rules to fine-tune the noise filtering per URL.
 
-## 🛠️ Tech Stack
+## 📦 Deployment & Local Setup Instructions
 
-- **Backend**: FastAPI (Python 3.11)
-- **Database**: PostgreSQL (Async SQLAlchemy)
-- **AI Engine**: OpenAI API
-- **Frontend**: Server-Side Rendered (Jinja2) + Modern CSS (No heavyweight JS frameworks)
-- **Infrastructure**: Docker & Docker Compose
-
-## 📦 Deployment Instructions
-
-### Option 1: Railway (Recommended)
-
-1. Fork this repository.
-2. Login to [Railway.app](https://railway.app/).
-3. Create a **New Project** → **Deploy from GitHub repo**.
-4. Railway will automatically detect the `Dockerfile`.
-5. Add a **PostgreSQL** database service within the Railway project.
-6. Set the following **Environment Variables** in the Service settings:
-   - `DATABASE_URL`: (Connect to the PostgreSQL service you just added)
-   - `OPENAI_API_KEY`: `sk-...`
-   - `PORT`: `8000`
-7. The app will deploy, and you'll get a public URL.
-
-### Option 2: Local Development (Docker)
-
-1. Clone the repository:
+### Option 1: Docker (Single Command Run)
+*If you lack a local Python setup or want the easiest deployment route.*
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Ujjuanku/Intelligence_Tracker_Backend.git
-   cd Intelligence_Tracker_Backend
+   git clone https://github.com/Ujjuanku/Intelligence_Tracker_Merge.git
+   cd Intelligence_Tracker_Merge
    ```
-
-2. Create a `.env` file:
+2. **Set up Environment Variables**:
    ```bash
    cp .env.example .env
-   # Add your OPENAI_API_KEY in the .env file
+   # Open .env and add your OPENAI_API_KEY
    ```
-
-3. Run with Docker Compose:
+3. **Run via Docker Compose**:
    ```bash
    docker compose up --build
    ```
+4. **Access the App**: Open `http://localhost:8000` in your browser.
 
-4. Access the app:
-   - Dashboard: `http://localhost:8000`
-   - System Status: `http://localhost:8000/system-status`
-   - API Docs: `http://localhost:8000/docs`
+### Option 2: Local Python Environment
+1. **Clone the repository** (as above) and navigate into it.
+2. **Create a virtual environment and install dependencies**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+3. **Set up Environment Variables**: Add your `OPENAI_API_KEY` to the `.env` file just like above. Ensure PostgreSQL is running locally and set `DATABASE_URL` in `.env` if not using SQLite fallback.
+4. **Run the Server**:
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000
+   ```
+5. **Access the App**: `http://localhost:8000`
 
-## 📁 Project Structure
+## 📁 System Architecture
+- **Backend Framework**: FastAPI (Async execution for high performance)
+- **Database**: PostgreSQL with asyncpg (managed via SQLAlchemy ORM)
+- **Frontend**: Jinja2 templating with pure Vanilla CSS (No heavy JS frameworks, keeping it lightweight)
+- **Generative AI**: OpenAI GPT-3.5-Turbo for content diff summarization
 
-```
-├── app/
-│   ├── main.py            # Application entrypoint & routes
-│   ├── database.py        # Database connection & session management
-│   ├── models.py          # SQLAlchemy database models
-│   ├── schemas.py         # Pydantic data schemas
-│   ├── services/
-│   │   ├── fetcher.py     # HTML fetching & cleaning logic
-│   │   ├── preprocess.py  # Regex-based noise reduction
-│   │   ├── diff_service.py # Logic for text comparison
-│   │   └── llm_service.py # OpenAI integration for summarization
-│   ├── templates/         # Jinja2 HTML templates
-│   └── static/            # CSS and assets
-├── Dockerfile             # Production container definition
-├── docker-compose.yml     # Local development orchestration
-└── requirements.txt       # Python dependencies
-```
-
-## 🛡️ Design Decisions
-
-1. **Why Async?**: We use `asyncpg` and `httpx` to handle multiple competitor checks concurrently without blocking the main thread, ensuring the dashboard remains responsive.
-2. **Why Server-Side Rendering?**: For this use case, a separate React frontend would add unnecessary complexity. Jinja2 templates allow for rapid iteration and a single deployment unit, perfect for an MVP.
-3. **Data Integrity**: We store the *processed* text, not just the raw HTML, ensuring that our historical diffs remain valid even if our cleaning logic changes in the future.
+## 📄 Included Documentation
+As requested by the assignment, you will find additional documentation files in the repository root:
+- **`AI_NOTES.md`**: Explains my AI tooling usage and LLM provider choices.
+- **`ABOUTME.md`**: Contains personal details and resume summary.
+- **`PROMPTS_USED.md`**: Records prompts used during app development.
